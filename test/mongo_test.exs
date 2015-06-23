@@ -55,6 +55,15 @@ defmodule MongoTest do
     assert %{"ok" => 1.0} = Mongo.find_one(pid, "$cmd", %{ping: 1}, %{})
   end
 
+  test "nested keywords" do
+    pid = connect_auth()
+    coll = unique_name
+
+    assert {:ok, %Write{type: :insert, num_inserted: 1}} =
+      Mongo.insert(pid, coll, [set: [title: "x"]])
+    assert %{"set" => %{"title" => "x"}} == Mongo.find_one(pid, coll, %{}, nil)
+  end
+
   test "insert and find_one" do
     pid = connect_auth()
     coll = unique_name
